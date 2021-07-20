@@ -72,6 +72,15 @@ public class TicketMachine
 	}
 	
 	/**
+	 * This method shows a prompt to the user, if the amount is not correct.
+	 */
+	public void prompt()
+	{
+		// Prompts a warning.
+		System.out.println("Please insert the correct amount of money.");
+	}
+	
+	/**
 	 * Print a ticket.
 	 * Update the total collected and
 	 * reduce the balance to zero.
