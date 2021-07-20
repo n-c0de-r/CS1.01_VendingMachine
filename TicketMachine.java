@@ -92,6 +92,14 @@ public class TicketMachine
 	}
 	
 	/**
+	 * Show the current ticket price as a string in the console.
+	 */
+	public void showPrice()
+	{
+		System.out.println("The price of a ticket is " + price + " cents.");
+	}
+	
+	/**
 	 * Print a ticket.
 	 * Update the total collected and
 	 * reduce the balance to zero.
