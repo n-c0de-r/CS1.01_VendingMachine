@@ -100,6 +100,64 @@ public class TicketMachine
 	}
 	
 	/**
+	 * Return the inserted balance in the least possible coin numbers.
+	 */
+	public void returnMoney()
+	{
+		// Initialize coin counts.
+		int euroCoin2 = 0;
+		int euroCoin1 = 0;
+		int centCoin50 = 0;
+		int centCoin20 = 0;
+		int centCoin10 = 0;
+		
+		// IF the balance is zero, print out an appropriate message.
+		if (balance == 0) {
+			System.out.println("There is no money in the machine.");
+		} else {
+			// While the balance is not empty, loop through
+			// and get the individual number of coins.
+			while (balance > 0) {
+				if (balance >= 200) {
+					balance = balance - 200;
+					euroCoin2 = euroCoin2 + 1;
+				} else if (balance >= 100) {
+					balance = balance - 100;
+					euroCoin1 = euroCoin1 + 1;
+				} else if (balance >= 50) {
+					balance = balance - 50;
+					centCoin50 = centCoin50 + 1;
+				} else if (balance >= 20) {
+					balance = balance - 20;
+					centCoin20 = centCoin20 + 1;
+				} else if (balance >= 10) {
+					balance = balance - 10;
+					centCoin10 = centCoin10 + 1;
+				} else if (balance < 10) {
+					balance = 0;
+				}
+			}
+			// Print out the number of coins returned.
+			System.out.println("You get the following coins back:");
+			if (euroCoin2 != 0) {
+				System.out.println("" + euroCoin2 + "x of 2-Euro-Coins.");
+			}
+			if (euroCoin1 != 0) {
+				System.out.println("" + euroCoin1 + "x of 1-Euro-Coins.");
+			}
+			if (centCoin50 != 0) {
+				System.out.println("" + centCoin50 + "x of 50-Cent-Coins.");
+			}
+			if (centCoin20 != 0) {
+				System.out.println("" + centCoin20 + "x of 20-Cent-Coins.");
+			}
+			if (centCoin10 != 0) {
+				System.out.println("" + centCoin10 + "x of 10-Cent-Coins.");
+			}
+		}
+	}
+	
+	/**
 	 * Show the current ticket price as a string in the console.
 	 */
 	public void showPrice()
