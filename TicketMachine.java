@@ -4,7 +4,7 @@
  * machine to an improved one, for showcase purposes.
  * This improved machine only accepts certain coins and
  * will return inapropriate amounts and set prices right
- * as n-c0de-r implemendet all guards needed to solve that.
+ * as n-c0de-r implemented all guards needed to solve that.
  * Compared to the original machine, this has a few extra
  * methods to do so correctly.
  * The price of a ticket is specified via the constructor.
