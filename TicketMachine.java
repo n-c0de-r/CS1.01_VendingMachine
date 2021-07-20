@@ -1,13 +1,16 @@
 /**
  * TicketMachine models a naive ticket machine that issues
- * flat-fare tickets.
+ * flat-fare tickets. Updated by n-c0de-r.
  * The price of a ticket is specified via the constructor.
- * It is a naive machine in the sense that it trusts its users
- * to insert enough money before trying to print a ticket.
- * It also assumes that users enter sensible amounts.
+ * This improved machine only accepts certain coins and
+ * will return inapropriate amounts and set prices right
+ * as n-c0de-r implemendet all guards needed to solve that.
+ * Compared to the original machine, this has a few extra
+ * methods to do so correctly.
  *
  * @author David J. Barnes and Michael Kölling
  * @version 2016.02.29
+ * @version 2021.07.20
  */
 public class TicketMachine
 {
@@ -19,7 +22,7 @@ public class TicketMachine
 	private int total;
 	// The total amount of tickets sold.
 	private int ticketnumbers;
-	
+
 	/**
 	 * Create a machine that issues tickets of the given price.
 	 * Note that the price must be greater than zero, and there
@@ -27,7 +30,7 @@ public class TicketMachine
 	 */
 	public TicketMachine(int cost)
 	{
-		price = cost;
+		price = checkAmount(cost);
 		balance = 0;
 		total = 0;
 		ticketnumbers = 0;
@@ -51,7 +54,7 @@ public class TicketMachine
 	}
 	
 	/** 
-	 * method get return the value of the total amount inserted.
+	 * Method get return the value of the total amount inserted.
 	 */
 	public int getTotal()
 	{
@@ -71,9 +74,9 @@ public class TicketMachine
 	 */
 	public void discount (int amount)
 	{
-		price = price - amount;
+		price = price - checkAmount(amount);
 	}
-	
+    
 	/**
 	 * This method empties the ticket machine.
 	 */
@@ -87,7 +90,7 @@ public class TicketMachine
 	 */
 	public void insertMoney(int amount)
 	{
-		balance = balance + amount;
+		balance = balance + checkAmount(amount);
 	}
 	
 	/**
@@ -168,26 +171,50 @@ public class TicketMachine
 	/**
 	 * Print a ticket.
 	 * Update the total collected and
-	 * reduce the balance to zero.
+	 * reduce the balance by the price.
 	 */
 	public void printTicket()
 	{
-		// Simulate the printing of a ticket.
-        System.out.println("##################");
-		System.out.println("# The BlueJ Line");
-		System.out.println("# Ticket");
-		System.out.println("# " + price + " cents.");
-		System.out.println("##################");
-		System.out.println();
-		
-		// Increase the number of tickets sold.
-		ticketnumbers = ticketnumbers + 1;
-		// Print the current ticket number, too.
-		System.out.println("This ticket's number is " + ticketnumbers);
-		
-		// Update the total collected with the balance.
-		total = total + balance;
-		// Clear the balance.
-		balance = 0;
+		 //Guard against not enough balance.
+		if (balance >= price) {
+			// Simulate the printing of a ticket.
+			System.out.println("##################");
+			System.out.println("# The BlueJ Line");
+			System.out.println("# Ticket");
+			System.out.println("# " + price + " cents.");
+			System.out.println("##################");
+			System.out.println();
+			
+			// Increase the number of tickets sold.
+			ticketnumbers = ticketnumbers + 1;
+			// Print the current ticket number, too.
+			System.out.println("This ticket's number is " + ticketnumbers);
+			
+			// Update the total collected with the balance.
+			total = total + balance;
+			// Clear the balance.
+			balance = balance - price;
+			
+		} else {
+			System.out.println("The inserted amount is not enough.");
+			System.out.println("You have inserted only " + balance + " cents,");
+			System.out.println("but a ticket costs " + price + " cents.");
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	private int checkAmount(int amount)
+	{
+		// If the amount is not fully divisible by 10, correct the amount.
+		if (amount % 10 != 0) {
+			System.out.println("This machine accepts 10ct as the minimum amount.");
+			System.out.println("All amounts will be cut down to the next 10ct value.");
+			System.out.println("You get " + amount % 10 + " cents back.");
+			// Reduce the amount by the excess residue.
+			amount = amount - amount % 10;
+		}
+		return amount;
 	}
 }
