@@ -73,7 +73,15 @@ public class TicketMachine
 	{
 		price = price - amount;
 	}
-    
+	
+	/**
+	 * This method empties the ticket machine.
+	 */
+	public void empty()
+	{
+		total = 0;
+	}
+	
 	/**
 	 * Receive an amount of money from a customer.
 	 */
