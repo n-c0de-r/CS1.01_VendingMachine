@@ -54,6 +54,14 @@ public class TicketMachine
 	{
 		return total;
 	}
+	
+	/**
+	 * Reduce price by the given amount.
+	 */
+	public void discount (int amount)
+	{
+		price = price - amount;
+	}
     
 	/**
 	 * Receive an amount of money from a customer.
