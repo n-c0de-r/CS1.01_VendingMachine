@@ -15,6 +15,8 @@
  */
 public class TicketMachine
 {
+	// Name of the public transport service company.
+	private String provider;
 	// The price of a ticket from this machine.
 	private int price;
 	// The amount of money entered by a customer so far.
@@ -25,16 +27,28 @@ public class TicketMachine
 	private int ticketnumbers;
 
 	/**
-	 * Create a machine that issues tickets of the given price.
-	 * Note that the price must be greater than zero, and there
-	 * are no checks to ensure this.
+	 * Create a machine that issues tickets of the given price
+	 * naming a certain public transport provider.
+	 * 
+	 * @param name	The name of a public transport provider.
+	 * @param cost	A single ticket cost in Euro cents.
 	 */
-	public TicketMachine(int cost)
+	public TicketMachine(String name, int cost)
 	{
+		provider = name.toUpperCase();
 		price = checkAmount(cost);
 		balance = 0;
 		total = 0;
 		ticketnumbers = 0;
+	}
+	
+	/**
+	 * Create a machine that issues tickets of the given price.
+	 * Overload constructor, just with the price.
+	 */
+	public TicketMachine(int cost)
+	{
+		this("BlueJ", cost);
 	}
 	
 	/**
@@ -117,7 +131,11 @@ public class TicketMachine
 		
 		// IF the balance is zero, print out an appropriate message.
 		if (balance == 0) {
+			System.out.println();
+			System.out.println("---------- > WARNING < -----------");
 			System.out.println("There is no money in the machine.");
+			System.out.println("---------- ---------- -----------");
+			System.out.println();
 		} else {
 			// While the balance is not empty, loop through
 			// and get the individual number of coins.
@@ -142,6 +160,8 @@ public class TicketMachine
 				}
 			}
 			// Print out the number of coins returned.
+			System.out.println();
+			System.out.println("---------- > INFORMATION < -----------");
 			System.out.println("You get the following coins back:");
 			if (euroCoin2 != 0) {
 				System.out.println("" + euroCoin2 + "x of 2-Euro-Coins.");
@@ -158,6 +178,8 @@ public class TicketMachine
 			if (centCoin10 != 0) {
 				System.out.println("" + centCoin10 + "x of 10-Cent-Coins.");
 			}
+			System.out.println("---------- ---------- -----------");
+			System.out.println();
 		}
 	}
 	
@@ -166,7 +188,9 @@ public class TicketMachine
 	 */
 	public void showPrice()
 	{
+		System.out.println();
 		System.out.println("The price of a ticket is " + price + " cents.");
+		System.out.println();
 	}
 	
 	/**
@@ -178,28 +202,30 @@ public class TicketMachine
 	{
 		 //Guard against not enough balance.
 		if (balance >= price) {
-			// Simulate the printing of a ticket.
-			System.out.println("##################");
-			System.out.println("# The BlueJ Line");
-			System.out.println("# Ticket");
-			System.out.println("# " + price + " cents.");
-			System.out.println("##################");
-			System.out.println();
-			
 			// Increase the number of tickets sold.
 			ticketnumbers = ticketnumbers + 1;
-			// Print the current ticket number, too.
-			System.out.println("This ticket's number is " + ticketnumbers);
+			
+			// Simulate the printing of a ticket.
+			System.out.println();
+			System.out.println("---------- > PRINTING < -----------");
+			System.out.println();
+			Ticket ticket = new Ticket(provider, price, ticketnumbers);
 			
 			// Update the total collected with the balance.
 			total = total + balance;
 			// Clear the balance.
 			balance = balance - price;
+			// Return the remainder amount.
+			returnMoney();
 			
 		} else {
+			System.out.println();
+			System.out.println("---------- > WARNING < -----------");
 			System.out.println("The inserted amount is not enough.");
 			System.out.println("You have inserted only " + balance + " cents,");
 			System.out.println("but a ticket costs " + price + " cents.");
+			System.out.println("---------- ---------- -----------");
+			System.out.println();
 		}
 	}
 	
@@ -208,14 +234,35 @@ public class TicketMachine
 	 */
 	private int checkAmount(int amount)
 	{
-		// If the amount is not fully divisible by 10, correct the amount.
-		if (amount % 10 != 0) {
-			System.out.println("This machine accepts 10ct as the minimum amount.");
-			System.out.println("All amounts will be cut down to the next 10ct value.");
-			System.out.println("You get " + amount % 10 + " cents back.");
-			// Reduce the amount by the excess residue.
-			amount = amount - amount % 10;
+		// If users enter negative values, catch that and convert it.
+		if (amount < 0) {
+			System.out.println();
+			System.out.println("---------- > WARNING < -----------");
+			System.out.println("You may not enter negative values!");
+			System.out.println("There are now negative currency coins.");
+			System.out.println("The amount will be converted to positive now.");
+			System.out.println("---------- ---------- -----------");
+			System.out.println();
+			
+			// Convert the negative amount to positive.
+			amount = Math.abs(amount);
+			
+			// If the amount is not fully divisible by 10, correct the amount.
+			if (amount % 10 != 0) {
+				System.out.println();
+				System.out.println("---------- > INFORMATION < -----------");
+				System.out.println("This machine accepts 10ct as the minimum amount.");
+				System.out.println("All amounts will be cut down to the next 10ct value.");
+				System.out.println("You get " + amount % 10 + " cents back.");
+				System.out.println("---------- ---------- -----------");
+				System.out.println();
+				
+				// Reduce the amount by the excess residue.
+				amount = amount - amount % 10;
+			}
 		}
+		
+		// Return the corrected value to the user.
 		return amount;
 	}
 }
