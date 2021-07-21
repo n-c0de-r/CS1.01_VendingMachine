@@ -120,7 +120,7 @@ public class TicketMachine
 	/**
 	 * Return the inserted balance in the least possible coin numbers.
 	 */
-	public void returnMoney()
+	public void returnMoney(int amount)
 	{
 		// Initialize coin counts.
 		int euroCoin2 = 0;
@@ -130,7 +130,7 @@ public class TicketMachine
 		int centCoin10 = 0;
 		
 		// IF the balance is zero, print out an appropriate message.
-		if (balance == 0) {
+		if (amount == 0) {
 			System.out.println();
 			System.out.println("---------- > WARNING < -----------");
 			System.out.println("There is no money in the machine.");
@@ -139,24 +139,22 @@ public class TicketMachine
 		} else {
 			// While the balance is not empty, loop through
 			// and get the individual number of coins.
-			while (balance > 0) {
-				if (balance >= 200) {
-					balance = balance - 200;
+			while (amount > 10) {
+				if (amount >= 200) {
+					amount = amount - 200;
 					euroCoin2 = euroCoin2 + 1;
-				} else if (balance >= 100) {
-					balance = balance - 100;
+				} else if (amount >= 100) {
+					amount = amount - 100;
 					euroCoin1 = euroCoin1 + 1;
-				} else if (balance >= 50) {
-					balance = balance - 50;
+				} else if (amount >= 50) {
+					amount = amount - 50;
 					centCoin50 = centCoin50 + 1;
-				} else if (balance >= 20) {
-					balance = balance - 20;
+				} else if (amount >= 20) {
+					amount = amount - 20;
 					centCoin20 = centCoin20 + 1;
-				} else if (balance >= 10) {
-					balance = balance - 10;
+				} else if (amount >= 10) {
+					amount = amount - 10;
 					centCoin10 = centCoin10 + 1;
-				} else if (balance < 10) {
-					balance = 0;
 				}
 			}
 			// Print out the number of coins returned.
@@ -212,11 +210,11 @@ public class TicketMachine
 			Ticket ticket = new Ticket(provider, price, ticketnumbers);
 			
 			// Update the total collected with the balance.
-			total = total + balance;
+			total = total + price;
 			// Clear the balance.
 			balance = balance - price;
 			// Return the remainder amount.
-			returnMoney();
+			returnMoney(balance);
 			
 		} else {
 			System.out.println();
@@ -256,9 +254,19 @@ public class TicketMachine
 				System.out.println("You get " + amount % 10 + " cents back.");
 				System.out.println("---------- ---------- -----------");
 				System.out.println();
-				
+					
 				// Reduce the amount by the excess residue.
 				amount = amount - amount % 10;
+				
+				// If you insert too much money!
+				if (amount > 10000) {
+					System.out.println();
+					System.out.println("---------- > WARNING < -----------");
+					System.out.println("You may not enter more than 100€ worth of cents!");
+					System.out.println("All amounts will be cut down to that limit value.");
+					returnMoney(amount - 10000);
+					amount = 10000;
+				}
 			}
 		}
 		
