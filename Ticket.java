@@ -31,18 +31,17 @@ public class Ticket {
 		
 		
 	public String printTicketInfo() {
-		String str = "";
-		str += "##################\r\n";
-		str += "# The " + lineName + " Line\r\n";
-		str += "# " + ticketPrice + " cents.\r\n";
-		str += "##################\r\n";
-		str += "# Ticket number: "+ lineName + "_" + ticketNumber + "";
+		String str = "##################<br>"
+					+ "# The " + lineName + " Line <br>"
+					+ "# " + ticketPrice + " cents.<br>"
+					+ "##################" + "<br><br>"
+					+ "# Ticket number: "+ lineName + "_" + ticketNumber + "<br><br>";
 		
 		//Set the date format.
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
 		// Get the current time and add 2 hours to it, ticket is valid that long.
-		str += "\n# Valid until: " + LocalDateTime.now().plusHours(2).format(format) + "";
-		str += "##################\r\n";
+		str += "Valid until: " + LocalDateTime.now().plusHours(2).format(format) + "<br>"
+					+"##################";
 		
 		return str;
 	}
