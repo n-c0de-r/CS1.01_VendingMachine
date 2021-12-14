@@ -34,7 +34,7 @@ public class TicketMachine
 	private int centCoin20 = 0;
 	private int centCoin10 = 0;
 	
-	private int errorNr = 14;
+	private int messageNr = 0;
 	
 	private int servicePin = 170621;
 	private int serviceCommand = 0;
@@ -145,31 +145,31 @@ public class TicketMachine
 	{
 		String str = "";
 		// Prompts a warning.
-		if (errorNr == 0) {
-			str += "---------- > WARNING < ----------\r\n";
-			str += "There is no money in the machine.\r\n";
-			str += "---------- ---------- -----------\r\n";
+		if (messageNr == 0) {
+			str = "<html>---------- > WARNING < ----------<br>"
+					+ "There is no money in the machine.<br>"
+					+ "---------- ---------- -----------<html>";
 		}
 		
-		if (errorNr == 11) {
-			str += "---------- > INFORMATION < -----------\r\n";
-			str += "You get the following coins back:\r\n";
+		if (messageNr == 11) {
+			str = "<html>---------- > INFORMATION < -----------<br>"
+					+ "You get the following coins back:<br>";
 			if (euroCoin2 != 0) {
-				str += "" + euroCoin2 + "x of 2-Euro-Coins.\r\n";
+				str += "" + euroCoin2 + "x of 2-Euro-Coins.<br>";
 			}
 			if (euroCoin1 != 0) {
-				str += "" + euroCoin1 + "x of 1-Euro-Coins.\r\n";
+				str += "" + euroCoin1 + "x of 1-Euro-Coins.<br>";
 			}
 			if (centCoin50 != 0) {
-				str += "" + centCoin50 + "x of 50-Cent-Coins.\r\n";
+				str += "" + centCoin50 + "x of 50-Cent-Coins.<br>";
 			}
 			if (centCoin20 != 0) {
-				str += "" + centCoin20 + "x of 20-Cent-Coins.\r\n";
+				str += "" + centCoin20 + "x of 20-Cent-Coins.<br>";
 			}
 			if (centCoin10 != 0) {
-				str += "" + centCoin10 + "x of 10-Cent-Coins.\r\n";
+				str += "" + centCoin10 + "x of 10-Cent-Coins.<br>";
 			}
-			str += "---------- ---------- -----------\r\n";
+			str += "---------- ---------- -----------<html>";
 			centCoin10 = 0;
 			centCoin20 = 0;
 			centCoin50 = 0;
@@ -178,41 +178,40 @@ public class TicketMachine
 			euroCoin2 = 0;
 		}
 		
-		if (errorNr == 12) {
-			str += "---------- > WARNING < -----------\r\n";
-			str += "The inserted amount is not enough.\r\n";
-			str += "You have inserted only " + balance + " cents,\r\n";
-			str += "but a ticket costs " + price + " cents.\r\n";
-			str += "---------- ---------- -----------\r\n";
+		if (messageNr == 12) {
+			str = "<html>---------- > WARNING < -----------<br>"
+					+ "The inserted amount is not enough.<br>"
+					+ "You have inserted only " + balance + " cents,<br>"
+					+ "but a ticket costs " + price + " cents.<br>"
+					+ "---------- ---------- -----------<html>";
 		}
 		
-		if (errorNr == 13) {
+		if (messageNr == 13) {
 			// Simulate the printing of a ticket.
-			str += "---------- > PRINTING < -----------\r\n";
+			str += "<html>---------- > PRINTING < -----------<br>";
 			Ticket ticket = new Ticket(provider, price, ticketnumbers);
-			str += ticket.printTicketInfo();
+			str += ticket.printTicketInfo() + "<html>";
 		}
 		
-		if (errorNr < 0) {
-			str += "---------- > WARNING < -----------\r\n";
-			str += "You may not enter negative values!\r\n";
-			str += "There are now negative currency coins.\r\n";
-			str += "The amount will be converted to positive now.\r\n";
-			str += "---------- ---------- -----------\r\n";
+		if (messageNr < 0) {
+			str += "<html>---------- > WARNING < -----------<br>"
+					+ "You may not enter negative values!<br>"
+					+ "There are now negative currency coins.<br>"
+					+ "The amount will be converted to positive now.<br>"
+					+ "---------- ---------- -----------<html>";
 		}
 		
-		if (errorNr < 10) {
-			str += "---------- > INFORMATION < -----------\r\n";
-			str += "This machine accepts 10ct as the minimum amount.\r\n";
-			str += "All amounts will be cut down to the next 10ct value.\r\n";
-			str += "You get " + errorNr + " cents back.\r\n";
-			str += "---------- ---------- -----------\r\n";
+		if (messageNr > 0 && messageNr < 10) {
+			str = "<html>---------- > INFORMATION < -----------<br>"
+					+ "This machine accepts 10ct as the minimum amount.<br>"
+					+ "All amounts will be cut down to the next 10ct value.<br>"
+					+ "---------- ---------- -----------<html>";
 		}
 		
-		if (errorNr >=10000) {
-			str += "---------- > WARNING < -----------\r\n";
-			str += "You may not enter more than 100€ worth of cents!\r\n";
-			str += "All amounts will be cut down to that limit value.\r\n";
+		if (messageNr >=10000) {
+			str += "---------- > WARNING < -----------<br>";
+			str += "You may not enter more than 100€ worth of cents!<br>";
+			str += "All amounts will be cut down to that limit value.<html>";
 		}
 		
 		return str;
@@ -228,13 +227,13 @@ public class TicketMachine
 		
 		// IF the balance is zero, print out an appropriate message.
 		if (amount == 0) {
-			errorNr = 10;
+			messageNr = 10;
 		} else {
 			// While the balance is not empty, loop through
 			// and get the individual number of coins.
 			convertCoins(amount);
 			// Print out the number of coins returned.
-			errorNr = 11;
+			messageNr = 11;
 		}
 		balance = 0;
 		return amount;
@@ -256,29 +255,23 @@ return str;
 	 * Update the total collected and
 	 * reduce the balance by the price.
 	 */
-	public String printTicket()
+	public void printTicket()
 	{
-		String str = "";
 		 //Guard against not enough balance.
 		if (balance >= price) {
 			// Increase the number of tickets sold.
 			ticketnumbers = ticketnumbers + 1;
 			
-			errorNr = 13;
-			str = prompt();
+			messageNr = 13;
 			
 			// Update the total collected with the balance.
 			total = total + price;
 			// Clear the balance.
 			balance = balance - price;
-			// Return the remainder amount.
-			returnMoney(balance);
 			
 		} else {
-			errorNr = 12;
-			str = prompt();
+			messageNr = 12;
 		}
-		return str;
 	}
 	
 	/**
