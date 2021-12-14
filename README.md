@@ -33,4 +33,4 @@ Description from the project:
   
   Updated to have a GUI.
   
-  <img src="Java_screenshot.png">
+  <img src="TicketMachine_show.gif">
