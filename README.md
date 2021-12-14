@@ -33,4 +33,4 @@ Description from the project:
   
   Updated to have a GUI.
   
-  <img="Java_screenshot.png">
+  <img src="Java_screenshot.png">
