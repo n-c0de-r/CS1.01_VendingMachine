@@ -1,3 +1,4 @@
+package main;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -10,6 +11,9 @@ import java.time.format.DateTimeFormatter;
  */
 
 public class Ticket {
+	private String lineName;
+	private int ticketPrice;
+	private int ticketNumber;
 	
 	/**
 	 * Constructor of a Ticket.
@@ -18,19 +22,29 @@ public class Ticket {
 	 * @param price	Price of a single ticket.
 	 * @param ticketnumber	This ticket's number.
 	 */
-	public Ticket (String name, int price, int ticketnumber) {
+	public Ticket (String name, int price, int number) {
 		// Simulate a ticket, output to the console.
-		System.out.println("##################");
-		System.out.println("# The " + name + " Line");
-		System.out.println("# Ticket");
-		System.out.println("# " + price + " cents.");
-		System.out.println("##################");
-		System.out.println("# Ticket number: "+ name + "_" + ticketnumber);
+		lineName = name;
+		ticketPrice = price;
+		ticketNumber = number;
+	}
+		
+		
+	public String printTicketInfo() {
+		String str = "";
+		str += "##################\r\n";
+		str += "# The " + lineName + " Line\r\n";
+		str += "# " + ticketPrice + " cents.\r\n";
+		str += "##################\r\n";
+		str += "# Ticket number: "+ lineName + "_" + ticketNumber + "";
 		
 		//Set the date format.
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
 		// Get the current time and add 2 hours to it, ticket is valid that long.
-		System.out.println("# Valid until: " + LocalDateTime.now().plusHours(2).format(format));
-		System.out.println("##################");
+		str += "\n# Valid until: " + LocalDateTime.now().plusHours(2).format(format) + "";
+		str += "##################\r\n";
+		
+		return str;
 	}
+	
 }
