@@ -1,250 +1,339 @@
-
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.WindowConstants;
-import javax.swing.border.EmptyBorder;
-
+ 
 /**
- * GUI for the Machine, based on the former labs.
- * 
- * @author n-c0de-r
- * @version 14.12.2021
+ * TicketMachine models a naive ticket machine that issues
+ * flat-fare tickets. Git user n-c0de-r updated this naive
+ * machine to an improved one, for showcasing purposes.
+ * This improved machine only accepts certain coins and
+ * will return inappropriate amounts and set prices right
+ * as n-c0de-r implemented all guards needed to solve that.
+ * Compared to the original machine, this has a few extra
+ * methods to do so correctly.
+ * The price of a ticket is specified via the constructor.
+ *
+ * @author David J. Barnes and Michael Kölling
+ * @version 2016.02.29
+ * @version 2021.07.20
  */
-public class GUI implements ActionListener {
+public class TicketMachine
+{
+    // Name of the public transport service company.
+    private String provider;
+    // The price of a ticket from this machine.
+    private int price;
+    // The amount of money entered by a customer so far.
+    private int balance;
+    // The total amount of money collected by this machine.
+    private int total;
+    // The total amount of tickets sold.
+    private int ticketnumbers;
+    
+    // inserted coins
+    private int euroCoin2 = 0;
+    private int euroCoin1 = 0;
+    private int centCoin50 = 0;
+    private int centCoin20 = 0;
+    private int centCoin10 = 0;
+    
+    private int messageNr = 0;
+    
+    private int servicePin = 170621;
+    private int serviceCommand = 0;
 
-    private TicketMachine machine;
-    private JFrame frame;
-    private JTextField display;
-    private JButton cancel, discount, empty, price;
-    private JPanel panel;
-    private JLabel message;
+    /**
+     * Create a machine that issues tickets of the given price
+     * naming a certain public transport provider.
+     * 
+     * @param name    The name of a public transport provider.
+     * @param cost    A single ticket cost in Euro cents.
+     */
+    public TicketMachine(String name, int cost)
+    {
+        provider = name.toUpperCase();
+        price = checkAmount(cost);
+        balance = 0;
+        total = 0;
+        ticketnumbers = 0;
+    }
     
     /**
-     * Basic constructor for any Ticket Machine.
-     * Takes a Ticket Machine as a parameter.
+     * Create a machine that issues tickets of the given price.
+     * Overload constructor, just with the price.
      */
-    public GUI(TicketMachine ticketMachine) {
-        machine = ticketMachine;
-        makeFrame();
-        frame.setVisible(true);
+    public TicketMachine(int cost)
+    {
+        this("BlueJ", cost);
     }
     
     /**
-     * Simple constructor for a standard Ticket machine.
-     * Overload constructor, passes on a new standard Ticket Machine.
+     * Create a machine without parameters.
+     * Overload constructor, price is set to 300 cents.
      */
-    public GUI() {
-        this(new TicketMachine());
+    public TicketMachine()
+    {
+        this(300);
     }
-
+    
     /**
-     * Set the visibility of the interface.
-     * 
-     * @param visible true if the interface is to be made visible, false otherwise.
+     * Return the name of the provider.
      */
-    public void setVisible(boolean visible) {
-        frame.setVisible(visible);
+    public String getProvider()
+    {
+        return provider;
     }
-
+    
     /**
-     * Creates the GUI Frame
+     * Return the price of a ticket.
      */
-    private void makeFrame() {
-        frame = new JFrame(machine.getProvider() + " Ticket Machine");
-
-        JPanel contentPane = (JPanel) frame.getContentPane();
-        contentPane.setLayout(new BorderLayout(8, 8));
-        contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-
-        display = new JTextField("" + (double) ((machine.getAmount()) / 100) + "0 €");
-        contentPane.add(display, BorderLayout.NORTH);
-        display.setEditable(false);
-
-        JPanel buttonPanel = new JPanel(new GridLayout(5, 3));
-
-        price = new JButton("Show price");
-        price.addActionListener(this);
-        buttonPanel.add(price);
-        price.setEnabled(true);
-        discount = new JButton("Set discount");
-        discount.addActionListener(this);
-        buttonPanel.add(discount);
-        discount.setEnabled(false);
-        empty = new JButton("Empty machine");
-        empty.addActionListener(this);
-        buttonPanel.add(empty);
-        empty.setEnabled(false);
-
-        addButton(buttonPanel, "50 €");
-        addButton(buttonPanel, "20 €");
-        addButton(buttonPanel, "10 €");
-
-        addButton(buttonPanel, " 5 €");
-        addButton(buttonPanel, " 2 €");
-        addButton(buttonPanel, " 1 €");
-
-        addButton(buttonPanel, "50ct");
-        addButton(buttonPanel, "20ct");
-        addButton(buttonPanel, "10ct");
-
-        cancel = new JButton("Cancel");
-        cancel.addActionListener(this);
-        buttonPanel.add(cancel);
-        cancel.setEnabled(true);
-        addButton(buttonPanel, " ");
-        addButton(buttonPanel, "Buy Ticket");
-
-        contentPane.add(buttonPanel, BorderLayout.CENTER);
-
-        panel = new JPanel();
-        message = new JLabel("For machine sercive push empty button 3x");
-        message.setPreferredSize(new Dimension(300, 100));
-        panel.add(message);
-        contentPane.add(panel, BorderLayout.SOUTH);
-
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.pack();
+    public int getPrice()
+    {
+        return price;
     }
-
+    
     /**
-     * Performs an action according to the String labeling a button.
-     * 
-     * @param event The event causing the action, a button click.
+     * Return the amount of money already inserted for the
+     * next ticket.
      */
-    public void actionPerformed(ActionEvent event) {
-        String command = event.getActionCommand();
-        String upStr = "";
-        String lowStr = "";
-
-        if (command.equals(" ")) {
-            if (display.getText().startsWith("Reduce price by: ")) {
-                int discount = Integer.valueOf(display.getText().substring(display.getText().length()-2));
-                if (machine.getPrice() > discount) {
-                    machine.discount(discount);
-                    lowStr = "New price is " + (double) ((machine.getPrice()) / 100.0) + "0 €";
-                }
-                display.setEditable(false);
+    public int getAmount()
+    {
+        return balance;
+    }
+    
+    /** 
+     * Method get return the value of the total amount inserted.
+     */
+    public int getTotal()
+    {
+        return total;
+    }
+    
+    /** 
+     * Method get return the value of the total tickets sold.
+     */
+    public int getTicketNumbers()
+    {
+        return ticketnumbers;
+    }
+    
+    /**
+     * Reduce price by the given amount.
+     */
+    public void discount (int amount)
+    {
+        price = price - checkAmount(amount);
+    }
+    
+    /**
+     * This method empties the ticket machine.
+     */
+    public void empty()
+    {
+        total = 0;
+    }
+    
+    /**
+     * Receive an amount of money from a customer.
+     */
+    public void insertMoney(int amount)
+    {
+        balance = balance + checkAmount(amount);
+    }
+    
+    /**
+     * This method shows a prompt to the user, if the amount is not correct.
+     */
+    public String prompt()
+    {
+        String str = "";
+        // Prompts a warning.
+        if (messageNr == 0) {
+            str = "<html>---------- > WARNING < ----------<br>"
+                    + "There is no money in the machine.<br>"
+                    + "---------- ---------- -----------<html>";
+        }
+        
+        if (messageNr == 11) {
+            str = "<html>---------- > INFORMATION < -----------<br>"
+                    + "You get the following coins back:<br>";
+            if (euroCoin2 != 0) {
+                str += "" + euroCoin2 + "x of 2-Euro-Coins.<br>";
             }
-            else {
-                machine.increaseService(1);
+            if (euroCoin1 != 0) {
+                str += "" + euroCoin1 + "x of 1-Euro-Coins.<br>";
             }
-            if (machine.checkService() == 3) {
-                display.setEditable(true);
-                upStr = "000000";
-                lowStr = "Please enter service PIN, then chose option.";
-                discount.setEnabled(true);
-                empty.setEnabled(true);
+            if (centCoin50 != 0) {
+                str += "" + centCoin50 + "x of 50-Cent-Coins.<br>";
+            }
+            if (centCoin20 != 0) {
+                str += "" + centCoin20 + "x of 20-Cent-Coins.<br>";
+            }
+            if (centCoin10 != 0) {
+                str += "" + centCoin10 + "x of 10-Cent-Coins.<br>";
+            }
+            str += "---------- ---------- -----------<html>";
+            centCoin10 = 0;
+            centCoin20 = 0;
+            centCoin50 = 0;
+            euroCoin1 = 0;
+            euroCoin2 = 0;
+            euroCoin2 = 0;
+        }
+        
+        if (messageNr == 12) {
+            str = "<html>---------- > WARNING < -----------<br>"
+                    + "The inserted amount is not enough.<br>"
+                    + "You have inserted only " + balance + " cents,<br>"
+                    + "but a ticket costs " + price + " cents.<br>"
+                    + "---------- ---------- -----------<html>";
+        }
+        
+        if (messageNr == 13) {
+            // Simulate the printing of a ticket.
+            str += "<html>---------- > PRINTING < -----------<br>";
+            Ticket ticket = new Ticket(provider, price, ticketnumbers);
+            str += ticket.printTicketInfo() + "<html>";
+        }
+        
+        if (messageNr < 0) {
+            str += "<html>---------- > WARNING < -----------<br>"
+                    + "You may not enter negative values!<br>"
+                    + "There are now negative currency coins.<br>"
+                    + "The amount will be converted to positive now.<br>"
+                    + "---------- ---------- -----------<html>";
+        }
+        
+        if (messageNr > 0 && messageNr < 10) {
+            str = "<html>---------- > INFORMATION < -----------<br>"
+                    + "This machine accepts 10ct as the minimum amount.<br>"
+                    + "All amounts will be cut down to the next 10ct value.<br>"
+                    + "---------- ---------- -----------<html>";
+        }
+        
+        if (messageNr >=10000) {
+            str += "---------- > WARNING < -----------<br>";
+            str += "You may not enter more than 100€ worth of cents!<br>";
+            str += "All amounts will be cut down to that limit value.<html>";
+        }
+        
+        return str;
+    }
+    
+    /**
+     * Return the inserted balance in the least possible coin numbers.
+     */
+    public int returnMoney(int amount)
+    {
+        // Initialize coin counts.
+
+        // IF the balance is zero, print out an appropriate message.
+        if (amount == 0) {
+            messageNr = 10;
+        } else {
+            // While the balance is not empty, loop through
+            // and get the individual number of coins.
+            convertCoins(amount);
+            // Print out the number of coins returned.
+            messageNr = 11;
+        }
+        balance = 0;
+        return amount;
+    }
+    
+    /**
+     * Show the current ticket price as a string in the console.
+     */
+    public String showPrice()
+    {
+        String str = "";
+        str += "The price of a ticket is " + price + " cents.\r\n";
+        return str;
+    }
+    
+    /**
+     * Print a ticket.
+     * Update the total collected and
+     * reduce the balance by the price.
+     */
+    public void printTicket()
+    {
+         //Guard against not enough balance.
+        if (balance >= price) {
+            // Increase the number of tickets sold.
+            ticketnumbers = ticketnumbers + 1;
+            
+            messageNr = 13;
+            
+            // Update the total collected with the balance.
+            total = total + price;
+            // Clear the balance.
+            balance = balance - price;
+            
+        } else {
+            messageNr = 12;
+        }
+    }
+    
+    /**
+     * 
+     */
+    private int checkAmount(int amount)
+    {
+        // If users enter negative values, catch that and convert it.
+        if (amount < 0) {            
+            // Convert the negative amount to positive.
+            amount = Math.abs(amount);
+        }
+        
+        // If the amount is not fully divisible by 10, correct the amount.
+        if (amount % 10 != 0) {
+            // Reduce the amount by the excess residue.
+            returnMoney(amount % 10);
+            amount = amount - amount % 10;
+                
+            // If you insert too much money!
+            if (amount > 10000) {
+                returnMoney(amount - 10000);
+                amount = 10000;
             }
         }
-
-        else {
-            display.setEditable(false);
-            discount.setEnabled(false);
-            empty.setEnabled(false);
-            machine.increaseService(-machine.checkService());
-            if (command.equals("Show price")) {
-                lowStr = "A ticket costs " + (double) ((machine.getPrice()) / 100.0) + "0 €";
-            }
-
-            else if (command.equals("Set discount")) {
-                if(checkPin()) {
-                    upStr = "Reduce price by: ";
-                    lowStr = "Enter discount in cents. Then hit the empty button.";
-                    display.setEditable(true);
-                } else {
-                    lowStr = "Wrong PIN entered!";
-                }
-            }
-
-            else if (command.equals("Empty machine")) {
-                if (checkPin()) {
-                    lowStr = "You got " + (double) ((machine.getTotal()) / 100) + "0 € out";
-                    machine.empty();
-                } else {
-                    lowStr = "Wrong PIN entered!";
-                }
-                display.setEditable(false);
-                empty.setEnabled(false);
-                machine.increaseService(-machine.checkService());
-                upStr = "" + (double) ((machine.getAmount()) / 100) + "0 €";
-            }
-
-            else if (command.equals("Cancel")) {
-                if (machine.getAmount() == 0) {
-                    upStr = "" + (double) ((machine.getAmount()) / 100) + "0 €";
-                    lowStr = machine.prompt();
-                } else {
-                    machine.returnMoney(machine.getAmount());
-                    upStr = "" + (double) ((machine.getAmount()) / 100) + "0 €";
-                    lowStr = machine.prompt();
-                }
-            }
-
-            else if (command.equals("Buy Ticket")) {
-                if (machine.getAmount() < machine.getPrice()) {
-                    machine.printTicket();
-                    lowStr = machine.prompt();
-                } else {
-                    machine.printTicket();
-
-                    JFrame f = new JFrame("Ticket");
-                    f.setPreferredSize(new Dimension(250, 200));
-                    f.setLocationRelativeTo(null);
-
-                    // set panel
-                    JPanel p = (JPanel) f.getContentPane();
-
-                    // create a label
-                    JLabel l = new JLabel(machine.prompt());
-
-                    p.add(l);
-                    f.setVisible(true);
-                    f.pack();
-
-                    machine.returnMoney(machine.getAmount());
-                    lowStr = machine.prompt();
-                }
-                upStr = "" + (double) ((machine.getAmount()) / 100) + "0 €";
-            }
-
-            else {
-                int num = 0;
-                if (command.contains("€")) {
-                    num = (int) (Double.parseDouble(command.substring(0, command.length() - 2).trim()) * 100);
-                } else {
-                    num = Integer.parseInt(command.substring(0, command.length() - 2).trim());
-                }
-                machine.insertMoney(num);
-                upStr = "" + ((double) (machine.getAmount()) / 100) + "0 €";
+        
+        // Return the corrected value to the user.
+        return amount;
+    }
+    
+    public int checkPin() {
+        return servicePin;
+    }
+    
+    public void increaseService(int number) {
+        serviceCommand += number;
+    }
+    
+    public int checkService() {
+        return serviceCommand;
+    }
+    
+    /**
+     * Converts any cent input in coins accordingly.
+     * @param amount    Amount in cents inserted.
+     */
+    private void convertCoins(int amount) {
+        while (amount > 10) {
+            if (amount >= 200) {
+                amount = amount - 200;
+                euroCoin2 = euroCoin2 + 1;
+            } else if (amount >= 100) {
+                amount = amount - 100;
+                euroCoin1 = euroCoin1 + 1;
+            } else if (amount >= 50) {
+                amount = amount - 50;
+                centCoin50 = centCoin50 + 1;
+            } else if (amount >= 20) {
+                amount = amount - 20;
+                centCoin20 = centCoin20 + 1;
+            } else if (amount >= 10) {
+                amount = amount - 10;
+                centCoin10 = centCoin10 + 1;
             }
         }
-        display.setText(upStr);
-        message.setText(lowStr);
-    }
-
-    /**
-     * Add a button to the button panel.
-     * 
-     * @param panel      The panel to receive the button.
-     * @param buttonText The text for the button.
-     */
-    protected void addButton(Container panel, String buttonText) {
-        JButton button = new JButton(buttonText);
-        button.addActionListener(this);
-        panel.add(button);
-    }
-
-    private boolean checkPin() {
-        return machine.checkPin() == Integer.parseInt(display.getText());
     }
 }
