@@ -7,7 +7,7 @@
  * machine, this has a few extra methods to do so correctly. The price of a
  * ticket is specified via the constructor.
  *
- * @author David J. Barnes and Michael Kölling
+ * @author David J. Barnes and Michael KÃ¶lling
  * @version 2016.02.29
  * @version 2021.07.20
  */
@@ -182,15 +182,16 @@ public class TicketMachine {
 			str = "<html>---------- > INFORMATION < -----------<br>"
 					+ "This machine accepts 10ct as the minimum amount.<br>"
 					+ "All amounts will be cut down to the next 10ct value.<br>"
+					+ "All amounts will be cut down to the next 10ct value.<br>"
 					+ "---------- ---------- -----------<html>";
 		}
 
 		if (messageNr >= 10000) {
 			str += "---------- > WARNING < -----------<br>";
-			str += "You may not enter more than 100€ worth of cents!<br>";
+			str += "You may not enter more than 100â‚¬ worth of cents!<br>";
 			str += "All amounts will be cut down to that limit value.<html>";
 		}
-
+		messageNr = 0;
 		return str;
 	}
 
@@ -251,6 +252,7 @@ public class TicketMachine {
 	private int checkAmount(int amount) {
 		// If users enter negative values, catch that and convert it.
 		if (amount < 0) {
+			messageNr = amount;
 			// Convert the negative amount to positive.
 			amount = Math.abs(amount);
 		}
@@ -258,12 +260,13 @@ public class TicketMachine {
 		// If the amount is not fully divisible by 10, correct the amount.
 		if (amount % 10 != 0) {
 			// Reduce the amount by the excess residue.
-			returnMoney(amount % 10);
+			messageNr = returnMoney(amount % 10);
 			amount = amount - amount % 10;
 
 			// If you insert too much money!
 			if (amount > 10000) {
-				returnMoney(amount - 10000);
+				messageNr = amount; // hmm... this never prints...
+				returnMoney(amount % 10000); // ... because this will!
 				amount = 10000;
 			}
 		}
@@ -290,23 +293,16 @@ public class TicketMachine {
 	 * @param amount Amount in cents inserted.
 	 */
 	private void convertCoins(int amount) {
-		while (amount > 0) {
-			if (amount >= 200) {
-				amount = amount - 200;
-				euroCoin2 = euroCoin2 + 1;
-			} else if (amount >= 100) {
-				amount = amount - 100;
-				euroCoin1 = euroCoin1 + 1;
-			} else if (amount >= 50) {
-				amount = amount - 50;
-				centCoin50 = centCoin50 + 1;
-			} else if (amount >= 20) {
-				amount = amount - 20;
-				centCoin20 = centCoin20 + 1;
-			} else if (amount >= 10) {
-				amount = amount - 10;
-				centCoin10 = centCoin10 + 1;
-			}
-		}
+	        // Better Solution, no loops
+		euroCoin2 = amount / 200;
+	        amount = amount % 200;
+	        euroCoin1 = amount / 100;
+	        amount = amount % 100;
+	        centCoin50 = amount / 50;
+	        amount = amount % 50;
+	        centCoin20 = amount / 20;
+	        amount = amount % 20;
+	        centCoin10 = amount / 10;
+	        amount = amount % 10;
 	}
 }
