@@ -1,5 +1,5 @@
 /**
- * WendingMachine models a naive wending machine that dispenses some snacks.
+ * VendingMachine models a naive vending machine that dispenses some snacks.
  * Git user n-c0de-r updated this naive machine to an improved one, for
  * showcasing purposes. This improved machine only accepts certain coins and
  * will return inappropriate amounts and set prices right as n-c0de-r
@@ -12,7 +12,7 @@
  * @author n-c0de-r
  * @version 2023.02.05
  */
-public class Basic_WendingMachine
+public class Basic_VendingMachine
 {
     // The price of a snack from this machine.
     private int price;
@@ -30,7 +30,7 @@ public class Basic_WendingMachine
      * 
      * @param cost  The cost of a snack in this machine.
      */
-    public Basic_WendingMachine(int cost)
+    public Basic_VendingMachine(int cost)
     {
         // Assignment 1
         // int prince = cost;
@@ -42,7 +42,7 @@ public class Basic_WendingMachine
     /**
      * Assignment 2, duplicate constructor
      */
-    // public Basic_WendingMachine(int cost)
+    // public Basic_VendingMachine(int cost)
     // {
     // int prince = cost;
     // balance = 0;

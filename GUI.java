@@ -22,7 +22,7 @@ import javax.swing.border.EmptyBorder;
  */
 public class GUI implements ActionListener {
 
-    private WendingMachine machine;
+    private VendingMachine machine;
     private JFrame frame;
     private JTextField display;
     private JButton cancel, discount, empty, price;
@@ -32,20 +32,20 @@ public class GUI implements ActionListener {
     /**
      * Basic constructor for a Gui. Takes a wending machine as a parameter.
      * 
-     * @param WendingMachine    A wending machine to make a GUI for.
+     * @param VendingMachine    A wending machine to make a GUI for.
      */
-    public GUI(WendingMachine WendingMachine) {
-        machine = WendingMachine;
+    public GUI(VendingMachine VendingMachine) {
+        machine = VendingMachine;
         makeFrame();
         frame.setVisible(true);
     }
 
     /**
      * Simple constructor for a standard wending machine.
-     * Overload constructor, passes on a new standard Wending Machine.
+     * Overload constructor, passes on a new standard Vending Machine.
      */
     public GUI() {
-        this(new WendingMachine());
+        this(new VendingMachine());
     }
 
     /**
@@ -61,7 +61,7 @@ public class GUI implements ActionListener {
      * Creates the GUI Frame
      */
     private void makeFrame() {
-        frame = new JFrame(machine.getBrand() + " Wending Machine");
+        frame = new JFrame(machine.getBrand() + " Vending Machine");
 
         JPanel contentPane = (JPanel) frame.getContentPane();
         contentPane.setLayout(new BorderLayout(8, 8));

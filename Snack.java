@@ -2,7 +2,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Snack represents a snack dispensed by the WendingMachine.
+ * Snack represents a snack dispensed by the VendingMachine.
  * Being it's own object, could use some own methods, too.
  *
  * @author n-c0de-r

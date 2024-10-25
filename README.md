@@ -4,7 +4,7 @@ Purpose of project: To illustrate the basics of fields, constructors, and method
 <img src="BlueJ_screenshot.png">
 
 Description from the project:
- WendingMachine models a naive wending machine that dispenses some snacks.
+ VendingMachine models a naive vending machine that dispenses some snacks.
  Git user n-c0de-r updated this naive machine to an improved one, for
  showcasing purposes. This improved machine only accepts certain coins and
  will return inappropriate amounts and set prices right as n-c0de-r
@@ -18,4 +18,4 @@ Description from the project:
   
   Updated to have a GUI. This can still be improved!
   
-  <img src="WendingMachine_show.gif">
+  <img src="VendingMachine_show.gif">

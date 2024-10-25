@@ -1,5 +1,5 @@
 /**
- * WendingMachine models a naive wending machine that dispenses some snacks.
+ * VendingMachine models a naive vending machine that dispenses some snacks.
  * Git user n-c0de-r updated this naive machine to an improved one, for
  * showcasing purposes. This improved machine only accepts certain coins and
  * will return inappropriate amounts and set prices right as n-c0de-r
@@ -14,7 +14,7 @@
  * 
  * Updated to have a GUI. This can still be improved!
  */
-public class WendingMachine {
+public class VendingMachine {
     // Name of the snack producing company.
     private String brand;
     // The price of a snack from this machine.
@@ -45,7 +45,7 @@ public class WendingMachine {
      * @param name  The brand of the producing company.
      * @param cost  A single snack cost in Euro cents.
      */
-    public WendingMachine(String name, int cost) {
+    public VendingMachine(String name, int cost) {
         brand = name.toUpperCase();
         price = checkAmount(cost);
         balance = 0;
@@ -59,7 +59,7 @@ public class WendingMachine {
      * 
      * @param cost  The price for snacks of this machine.
      */
-    public WendingMachine(int cost) {
+    public VendingMachine(int cost) {
         this("BlueJ", cost);
     }
 
@@ -67,7 +67,7 @@ public class WendingMachine {
      * Create a machine without parameters.
      * Overload constructor, price is set to 300 cents.
      */
-    public WendingMachine() {
+    public VendingMachine() {
         this(300);
     }
 
@@ -115,7 +115,7 @@ public class WendingMachine {
     }
 
     /**
-     * This method empties the wending machine.
+     * This method empties the vending machine.
      */
     public void empty() {
         total = 0;
